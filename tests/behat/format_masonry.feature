@@ -42,7 +42,7 @@ Feature: format_masonry
       | Page content | x  |
     And I click on "Save and return to course" "button"
     And I turn editing mode off
-    Then I should see "General" in the "li#section-0" "css_element"
+    Then I should not see "General" in the "li#section-0" "css_element"
 
   Scenario: The modules should be visible and hidden in masonry format
     Given I am on the "C1" "Course" page logged in as "teacher1"
