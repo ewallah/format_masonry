@@ -34,18 +34,6 @@ require_once($CFG->dirroot.'/course/format/renderer.php');
 class format_masonry_renderer extends format_section_renderer_base {
 
     /**
-     * Constructor method, calls the parent constructor
-     *
-     * @param moodle_page $page
-     * @param string $target one of rendering target constants
-     */
-    public function __construct(moodle_page $page, $target) {
-        parent::__construct($page, $target);
-
-        $page->set_other_editing_capability('moodle/course:setcurrentsection');
-    }
-
-    /**
      * Generate the starting masonry container html for a list of brick sections
      * @return string HTML to output.
      */
@@ -79,7 +67,10 @@ class format_masonry_renderer extends format_section_renderer_base {
      * @param int $sectionreturn The section to return to after an action
      * @return string HTML to output.
      */
-    protected function section_header($section, $course, $onsectionpage, $sectionreturn=null) {
+    protected function oldsection_header($section, $course, $onsectionpage, $sectionreturn=null) {
+        debugging('section_header() is deprecated. Please use ' .
+        'core_course\output\section_format to render a section or core_course\output\section_format\header '.
+        'to print ony the header.', DEBUG_DEVELOPER);
         if ($section->section == 0 && empty($section->sequence)) {
             return '';
         }
@@ -110,7 +101,9 @@ class format_masonry_renderer extends format_section_renderer_base {
      * @param array    $mods (argument not used)
      * @return string HTML to output.
      */
-    protected function section_summary($section, $course, $mods) {
+    protected function oldsection_summary($section, $course, $mods) {
+        debugging('Method format_summary_text is deprecated, please use'.
+                'core_course\output\section_format\summary::format_summary_text instead', DEBUG_DEVELOPER);
         $str = $this->section_header($section, $course, false, 0);
         if ($section->uservisible) {
             $str .= $this->courserenderer->course_section_cm_list($course, $section, 0);

@@ -221,14 +221,11 @@ class course_format_masonry_testcase extends \advanced_testcase {
             ['name' => 'course_format_masonry', 'fullpath' => '/course/format/masonry/format.js',
              'requires' => ['base', 'node', 'transition', 'event', 'io-base', 'moodle-core-io', 'moodle-core-dock']]);
         $renderer = new \format_masonry_renderer($page, null);
-        ob_start();
-        $renderer->print_single_section_page($course, null, null, null, null, 1);
-        $out1 = ob_get_contents();
-        $renderer->print_multiple_section_page($course, null, null, null, null, null);
-        $out2 = ob_get_contents();
-        ob_end_clean();
+        $format = course_get_format($course);
+        $outputclass = $format->get_output_classname('course_format');
+        $output = new $outputclass($format);
+        $out1 = $renderer->render($output);
         $this->assertStringContainsString('Topic 1', $out1);
-        $this->assertStringContainsString('Topic 1', $out2);
         $modinfo = get_fast_modinfo($course);
         $section = $modinfo->get_section_info(1);
         $this->assertStringContainsString('Topic 1', $renderer->section_title($section, $course));
@@ -243,26 +240,17 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $PAGE->requires->js('/course/format/topics/format.js');
 
         $renderer = $PAGE->get_renderer('format_topics');
-        ob_start();
-        $renderer->print_single_section_page($course, null, null, null, null, 0);
-        $out1 = ob_get_contents();
-        $renderer->print_multiple_section_page($course, null, null, null, null, null);
-        $out2 = ob_get_contents();
-        ob_end_clean();
-        $this->assertStringContainsString(' Add an activity', $out1);
-        $this->assertStringContainsString('Topic 1', $out2);
+        $output = new $outputclass($format);
+        $out2 = $renderer->render($output);
+        $this->assertStringContainsString(' Add an activity', $out2);
         $course->marker = 2;
         course_set_marker($course->id, 2);
 
         $renderer = $PAGE->get_renderer('format_masonry');
-        ob_start();
-        $renderer->print_single_section_page($course, null, null, null, null, 0);
-        $out3 = ob_get_contents();
-        $renderer->print_multiple_section_page($course, null, null, null, null, null);
-        $out4 = ob_get_contents();
-        ob_end_clean();
+        $format = course_get_format($course);
+        $output = new $outputclass($format);
+        $out3 = $renderer->render($output);
         $this->assertStringContainsString(' Add an activity', $out3);
-        $this->assertStringContainsString('Topic 1', $out4);
     }
 
     /**
