@@ -29,7 +29,7 @@ jobs:
       fail-fast: false
       matrix:
         moodle-branch: ['master']
-        php: ['7.4', '7.3']
+        php: ['7.4']
         database: ['mariadb', 'pgsql']
 
     steps:

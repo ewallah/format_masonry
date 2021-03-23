@@ -8,8 +8,8 @@
 }
 
 #page-course-view-masonry .masonry {
-    margin: auto auto !important;
-    margin-bottom: 1rem !important;
+    margin: auto auto !important; /* stylelint-disable-line declaration-no-important */
+    margin-bottom: 1rem !important; /* stylelint-disable-line declaration-no-important */
 }
 
 #page-course-view-masonry .masonry-brick {
@@ -23,6 +23,7 @@
     padding: 0;
     width: auto;
 }
+
 #page-course-view-masonry .masonry-brick ul.section.img-text {
     margin: 1px;
     min-width: 10rem;
