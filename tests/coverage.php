@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/** Coverage information for the core_grading subsystem. */
+// Coverage information for the core_grading subsystem.
 return new class extends phpunit_coverage_info {
 
     /** @var array The list of folders relative to the plugin root to include in coverage generation. */
