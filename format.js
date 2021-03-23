@@ -25,7 +25,7 @@ M.masonry.init = function(Y, cfg) {
             setter: function(node) {
                 var n = Y.one(node);
                 if (!n) {
-                    n = Y.one('#coursemasonry');
+                    n = Y.one('.masonry');
                 }
                 if (!n) {
                     Y.fail('Masonry: Invalid Node Given: ' + node);
@@ -41,7 +41,7 @@ M.masonry.init = function(Y, cfg) {
         isFitWidth: {value: true},
         containerStyle: {value: {position: 'relative'}},
         columnWidth: {value: 2},
-        itemSelector: {value: '.section.main'}
+        itemSelector: {value: 'li.section.main'}
     };
 
     Y.extend(Masonry, Y.Base, {

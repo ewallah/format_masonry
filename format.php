@@ -33,6 +33,7 @@ $course = course_get_format($course)->get_course();
 $context = context_course::instance($course->id);
 $format = course_get_format($course);
 $outputclass = $format->get_output_classname('course_format');
+$output = new $outputclass($format);
 
 // Make sure section 0 is created.
 course_create_sections_if_missing($format->get_course(), 0);
@@ -40,7 +41,9 @@ course_create_sections_if_missing($format->get_course(), 0);
 
 if ($PAGE->user_is_editing()) {
     // Rely on the standard topics rendering.
+    $PAGE->requires->js('/course/format/weeks/format.js');
     $renderer = $PAGE->get_renderer('format_weeks');
+
 } else {
     // Render using the masonry js.
     $PAGE->requires->js_init_call('M.masonry.init',
@@ -60,5 +63,4 @@ if ($PAGE->user_is_editing()) {
     );
     $renderer = $PAGE->get_renderer('format_masonry');
 }
-$output = new $outputclass($format);
 echo $renderer->render($output);

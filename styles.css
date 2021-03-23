@@ -2,14 +2,30 @@
     display: none;
 }
 
-#page-course-view-masonry #coursemasonry .section .content .summary .no-overflow {
+#page-course-view-masonry .masonry .section .content .summary .no-overflow {
     overflow: visible;
     padding-bottom: 0;
 }
 
-#page-course-view-masonry #coursemasonry {
-    margin: auto auto;
-    margin-bottom: 10px;
+#page-course-view-masonry .masonry {
+    margin: auto auto !important;
+    margin-bottom: 1rem !important;
+}
+
+#page-course-view-masonry .masonry-brick {
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: .5rem;
+    -moz-border-radius: .5rem;
+    float: left;
+    list-style-type: none;
+    margin: 1rem 1rem 0 0;
+    padding: 0;
+    width: auto;
+}
+#page-course-view-masonry .masonry-brick ul.section.img-text {
+    margin: 1px;
+    min-width: 10rem;
 }
 
 #page-course-view-masonry .admin_colourpicker .previewcolour,
@@ -104,49 +120,23 @@
     white-space: nowrap;
 }
 
-#page-course-view-masonry .course-content ul.topics li.section .content {
+#page-course-view-masonry .course-content ul.masonry li.section .content {
     margin: 10px 10px;
 }
 
-#page-course-view-masonry .course-content ul.topics li.section .left {
+#page-course-view-masonry .course-content ul.masonry li.section .left {
     text-align: left;
     padding: 0 0;
 }
 
-#page-course-view-masonry .course-content ul.topics li.section .right {
+#page-course-view-masonry .course-content ul.masonry li.section .right {
     text-align: right;
     padding: 0 0;
 }
 
-#page-course-view-masonry .course-content ul.topics li.section {
-    border: 1px solid #ccc;
-    list-style: none;
-    margin: 10px 10px 0 0;
-    padding: 4px 4px 0 0;
-    background: #f0f0f0;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-}
-
-#page-course-view-masonry .course-content ul.topics li.section.main.clearfix {
-    border: 0 solid #ccc;
-    list-style: none;
-    margin: 10px 0 20px 0;
-    padding: 0;
-    background: #f0f0f0;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-}
-
-#page-course-view-masonry .course-content ul.topics {
+#page-course-view-masonry .course-content ul.masonry {
     margin: 5px;
     padding: 5px;
-}
-
-#page-course-view-masonry .item {
-    width: auto;
-    margin: 10px 10px 0 0;
-    float: left;
 }
 
 #page-course-view-masonry .jumpmenu {
@@ -163,6 +153,3 @@
     padding: 7px 0 0 5px;
 }
 
-#page-course-view-masonry ul.section.img-text {
-    margin: 1px;
-}
