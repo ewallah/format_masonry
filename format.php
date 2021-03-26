@@ -29,28 +29,26 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
-$course = course_get_format($course)->get_course();
-$context = context_course::instance($course->id);
 $format = course_get_format($course);
 $outputclass = $format->get_output_classname('course_format');
-$output = new $outputclass($format);
-
-// Make sure section 0 is created.
 course_create_sections_if_missing($format->get_course(), 0);
 
 
 if ($PAGE->user_is_editing()) {
     // Rely on the standard topics rendering.
-    $PAGE->requires->js('/course/format/weeks/format.js');
-    $renderer = $PAGE->get_renderer('format_weeks');
+    $output = new \core_course\output\course_format($format);
+    $PAGE->requires->js('/course/format/topics/format.js');
+    $renderer = $PAGE->get_renderer('format_topics');
 
 } else {
+    $output = new $outputclass($format);
+    $renderer = $PAGE->get_renderer('format_masonry');
     // Render using the masonry js.
     $PAGE->requires->js_init_call('M.masonry.init',
             [[
-               'node' => '#coursemasonry',
-               'itemSelector' => '.section.main',
-               'columnWidth' => 1,
+               'node' => '.masonry',
+               'itemSelector' => '.masonry-brick',
+               'columnWidth' => 3,
                'isRTL' => right_to_left(),
                'gutterWidth' => 0
             ]],
@@ -61,6 +59,5 @@ if ($PAGE->user_is_editing()) {
                'requires' => ['base', 'node', 'transition', 'event', 'io-base', 'moodle-core-io']
             ]
     );
-    $renderer = $PAGE->get_renderer('format_masonry');
 }
 echo $renderer->render($output);

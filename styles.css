@@ -27,6 +27,13 @@
 #page-course-view-masonry .masonry-brick ul.section.img-text {
     margin: 1px;
     min-width: 10rem;
+    padding: 0;
+}
+
+#page-course-view-masonry .masonry-brick h3.sectionname,
+#page-course-view-masonry .masonry-brick .activityinstance {
+    padding-left: 0;
+    white-space: nowrap;
 }
 
 #page-course-view-masonry .admin_colourpicker .previewcolour,
@@ -114,11 +121,6 @@
 
 #page-course-view-masonry .course-content .section-summary .section-summary-activities .activity-count {
     color: #000;
-}
-
-#page-course-view-masonry .course-content .sectionname,
-#page-course-view-masonry .course-content .section .activity .instancename {
-    white-space: nowrap;
 }
 
 #page-course-view-masonry .course-content ul.masonry li.section .content {

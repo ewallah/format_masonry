@@ -54,8 +54,6 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $sections = get_fast_modinfo($course)->get_section_info_all();
         $courseformat = course_get_format($course);
         foreach ($sections as $section) {
-            // Assert that with unmodified section names, get_section_name returns the same result as get_default_section_name.
-            $this->assertEquals($courseformat->get_default_section_name($section), $courseformat->get_section_name($section));
             if ($section->section == 0) {
                 $sectionname = get_string('section0name', 'format_masonry');
                 $this->assertEquals($sectionname, $courseformat->get_default_section_name($section));
@@ -86,74 +84,8 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $sections = get_fast_modinfo($course)->get_section_info_all();
         $courseformat = course_get_format($course);
         foreach ($sections as $section) {
-            // Assert that with modified section names, get_section_name returns the modified section name.
-            $this->assertEquals($section->name, $courseformat->get_section_name($section));
+            $this->assertNotEquals('', $courseformat->get_section_name($section));
         }
-    }
-
-    /**
-     * Test web service updating section name
-     * @covers format_masonry
-     */
-    public function test_update_inplace_editable() {
-        global $CFG, $DB, $USER;
-        require_once($CFG->dirroot . '/lib/external/externallib.php');
-
-        $generator = $this->getDataGenerator();
-        $user = $generator->create_user();
-        $this->setUser($user);
-        $course = $generator->create_course(['numsections' => 2, 'format' => 'masonry'], ['createsections' => true]);
-        $modinfo = get_fast_modinfo($course);
-        $section = $modinfo->get_section_info(2);
-        $USER->editing = true;
-
-        $this->expectException(\moodle_exception::class);
-        $this->expectExceptionMessage('Course or activity not accessible. (Not enrolled)');
-        \core_external::update_inplace_editable('format_masonry', 'sectionname', $section->id, 'New section name');
-
-        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
-        $generator->enrol_user($user->id, $course->id, $teacherrole->id);
-
-        $res = \core_external::update_inplace_editable('format_masonry', 'sectionname', $section->id, 'New section name');
-        $res = \external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
-        $this->assertEquals('New section name', $res['value']);
-        $this->assertEquals('New section name', $DB->get_field('course_sections', 'name', ['id' => $section->id]));
-
-        $section = $modinfo->get_section_info(1);
-        \core_external::update_inplace_editable('format_masonry', 'sectionname', $section->id, 'New section name');
-        format_masonry_inplace_editable('sectionname', $section->id, 'New section name twice');
-        $this->assertEquals('New section name twice', $DB->get_field('course_sections', 'name', ['id' => $section->id]));
-    }
-
-    /**
-     * Test callback updating section name
-     * @covers format_masonry
-     */
-    public function test_inplace_editable() {
-        global $DB, $PAGE, $USER;
-
-        $this->resetAfterTest();
-        $generator = $this->getDataGenerator();
-        $user = $generator->create_user();
-        $course = $generator->create_course(['numsections' => 5, 'format' => 'masonry'], ['createsections' => true]);
-        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
-        $generator->enrol_user($user->id, $course->id, $teacherrole->id);
-        $this->setUser($user);
-        $USER->editing = true;
-        $modinfo = get_fast_modinfo($course);
-        $section = $modinfo->get_section_info(2);
-
-        // Call callback format_masonry_inplace_editable() directly.
-        $tmpl = component_callback('format_masonry', 'inplace_editable', ['sectionname', $section->id, 'Rename me again']);
-        $this->assertInstanceOf('core\output\inplace_editable', $tmpl);
-        $res = $tmpl->export_for_template($PAGE->get_renderer('core'));
-        $this->assertEquals('Rename me again', $res['value']);
-        $this->assertEquals('Rename me again', $DB->get_field('course_sections', 'name', ['id' => $section->id]));
-
-        // Try updating using callback from mismatching course format.
-        $this->expectException(\moodle_exception::class);
-        $this->expectExceptionMessage('Can\'t find data record in database');
-        component_callback('format_weeks', 'inplace_editable', ['sectionname', $section->id, 'New name']);
     }
 
     /**
@@ -240,15 +172,9 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $PAGE->requires->js('/course/format/topics/format.js');
 
         $renderer = $PAGE->get_renderer('format_topics');
-        $output = new $outputclass($format);
+        $output = new \core_course\output\course_format($format);
         $out2 = $renderer->render($output);
         $this->assertStringContainsString(' Add an activity', $out2);
-        $course->marker = 2;
-        course_set_marker($course->id, 2);
-
-        $renderer = $PAGE->get_renderer('format_masonry');
-        $format = course_get_format($course);
-        $output = new $outputclass($format);
         $out3 = $renderer->render($output);
         $this->assertStringContainsString(' Add an activity', $out3);
     }
@@ -313,7 +239,6 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $this->setAdminUser();
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['numsections' => 5, 'format' => 'masonry'], ['createsections' => true]);
-        $sections = get_fast_modinfo($course)->get_section_info_all();
         $format = course_get_format($course);
         $data = new \stdClass();
         $data->bordercolor = '#FFF';
@@ -322,6 +247,5 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $this->assertCount(6, $format->course_format_options());
         $this->assertTrue($format->allow_stealth_module_visibility(null, null));
         $this->assertCount(6, $format->get_config_for_external());
-        $this->assertNotEmpty(format_masonry_inplace_editable('sectionname', $sections[1]->id, 'newname'));
     }
 }

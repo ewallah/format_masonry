@@ -35,7 +35,7 @@ M.masonry.init = function(Y, cfg) {
         },
         isResizable: {value: true},
         isAnimated: {value: true},
-        animationOptions: {value: {duration: 0.5}},
+        animationOptions: {value: {duration: 1}},
         gutterWidth: {value: 0},
         isRTL: {value: false},
         isFitWidth: {value: true},
@@ -49,17 +49,6 @@ M.masonry.init = function(Y, cfg) {
         initializer: function() {
             this._create();
             this._init();
-        },
-
-        destructor: function() {
-            this.bricks
-                .removeClass('masonry-brick')
-                .setStyles({position: '', top: '', left: ''});
-            this.get('node')
-                .detach('masonry|*')
-                .removeClass('masonry')
-                .setStyles(this.originalStyle);
-            Y.detach('masonry|*');
         },
 
         _outerWidth: function(node) {
@@ -95,8 +84,7 @@ M.masonry.init = function(Y, cfg) {
 
         _getBricks: function(elems) {
             var bricks = this._filterFindBricks(elems)
-                             .setStyle('position', 'absolute')
-                             .addClass('masonry-brick');
+                             .setStyle('position', 'absolute');
             return bricks;
         },
 
@@ -122,9 +110,6 @@ M.masonry.init = function(Y, cfg) {
             };
             this.horizontalDirection = this.horizontalDirection.toLowerCase();
             this.isFluid = columnWidth && typeof columnWidth === 'function';
-            setTimeout(function() {
-                instance.get('node').addClass('masonry');
-            }, 0);
 
             /* When window size changed. */
             Y.on('masonry|windowresize', function() {
@@ -276,34 +261,6 @@ M.masonry.init = function(Y, cfg) {
         reload: function(callback) {
             this.reloadItems();
             this._init(callback);
-            return this;
-        },
-
-        appended: function(content, isAnimatedFromBottom, callback) {
-            if (isAnimatedFromBottom) {
-                this._filterFindBricks(content).setStyles({top: this.get('node').get('region').height});
-                var instance = this;
-                setTimeout(function() {
-                    instance._appended(content, callback);
-                }, 1);
-            } else {
-                this._appended(content, callback);
-            }
-            return this;
-        },
-
-        _appended: function(content, callback) {
-            var newBricks = this._getBricks(content);
-            this.bricks = this.bricks.concat(newBricks);
-            this.layout(newBricks, callback);
-        },
-
-        remove: function(content) {
-            var self = this;
-            content.each(function() {
-                self.bricks.splice(self.bricks.indexOf(this), 1);
-                this.remove(true);
-            });
             return this;
         },
 

@@ -1,0 +1,111 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_masonry/course_format
+
+    Displays the complete course format.
+
+    Example context (json):
+    {
+        "sections": [
+            {
+                "num": 1,
+                "id": 35,
+                "header": "Section title",
+                "border": "2px solid gray",
+                "backgroundc": "white",
+                "cmlist": {
+                    "cms": [
+                        {
+                            "cmitem": {
+                                "cmformat": {
+                                    "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Another forum</span></a>",
+                                    "hasname": "true"
+                                },
+                                "id": 3,
+                                "module": "forum",
+                                "extraclasses": "newmessages"
+                            }
+                        }
+                    ],
+                    "hascms": true
+                },
+                "summary": {
+                    "summarytext": "Summary text!"
+                }
+            },
+            {
+                "num": 4,
+                "id": 36,
+                "header": "Section 2 title",
+                "border": "1px solid gray",
+                "backgroundc": "white",
+                "cmlist": {
+                    "cms": [
+                        {
+                            "cmitem": {
+                                "cmformat": {
+                                    "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Forum example</span></a>",
+                                    "hasname": "true"
+                                },
+                                "id": 5,
+                                "module": "forum",
+                                "extraclasses": "newmessages"
+                            }
+                        }
+                    ],
+                    "hascms": true
+                },
+                "summary": {
+                    "summarytext": "Summary text!"
+                }
+            }
+        ],
+        "format": "masonry",
+        "title": "Course title example",
+        "completionhelp": "? Course completion"
+    }
+}}
+<h2 class="accesshide">{{{title}}}</h2>
+<div style="float:right">{{{completionhelp}}}</div>
+<ul class="masonry">
+    {{#sections}}
+        <li id="section-{{num}}"
+            class="section masonry-brick"
+            style="background-color: {{ backgroundc }}; border: {{ border }}"
+            aria-label="sectionid-{{id}}-title">
+            <div class="content">
+                <h3 class="sectionid-{{id}}-title sectionname" style="white-space: nowrap">
+                    {{#headers}} {{ headers }} {{/headers}}
+                    {{^headers}} {{#str}} sectionname,format_masonry {{/str}} {{ num }} {{/headers}}
+                </h3>
+                {{{completioninfo}}}
+                {{#availability}}
+                    {{> core_course/local/section_format/availability }}
+                {{/availability}}
+                <div class="summary">
+                {{#summary}}
+                    {{> core_course/local/section_format/summary }}
+                {{/summary}}
+                </div>
+                {{#cmsummary}} {{> core_course/local/section_format/cmsummary }} {{/cmsummary}}
+                {{#cmlist}} {{> core_course/local/section_format/cmlist }} {{/cmlist}}
+                
+            </div>
+       </li>
+    {{/sections}}
+</ul>
