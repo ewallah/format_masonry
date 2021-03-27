@@ -1,4 +1,4 @@
-#page-course-view-masonry #completionprogressid {
+#page-course-view-masonry div.content #completionprogressid {
     display: none;
 }
 
@@ -10,6 +10,18 @@
 #page-course-view-masonry .masonry {
     margin: auto auto !important; /* stylelint-disable-line declaration-no-important */
     margin-bottom: 1rem !important; /* stylelint-disable-line declaration-no-important */
+}
+
+#page-course-view-masonry .icon.fa-arrows-v {
+    margin: -1em;
+}
+
+#page-course-view-masonry .section_add_menus {
+    white-space: nowrap;
+}
+
+#page-course-view-masonry .section .activity .actions {
+    right: -1em;
 }
 
 #page-course-view-masonry .masonry-brick {

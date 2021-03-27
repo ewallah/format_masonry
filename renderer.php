@@ -34,33 +34,6 @@ require_once($CFG->dirroot.'/course/format/renderer.php');
 class format_masonry_renderer extends format_section_renderer_base {
 
     /**
-     * Generate the starting masonry container html for a list of brick sections
-     * @return string HTML to output.
-     */
-    protected function start_section_list() {
-        return html_writer::start_tag('ul', ['id' => 'coursemasonry', 'class' => "topics masonry"]);
-    }
-
-    /**
-     * Generate the section title.
-     *
-     * @param stdClass $section The course_section entry from DB
-     * @param stdClass $course The course entry from DB
-     * @return string HTML to output.
-     */
-    public function section_title($section, $course) {
-        return get_section_name($course, $section);
-    }
-
-    /**
-     * Generate the title for this section page
-     * @return string the page title
-     */
-    protected function page_title() {
-        return get_string('topicoutline');
-    }
-
-    /**
      * Renders the provided widget and returns the HTML to display it.
      *
      * @param renderable $widget instance with renderable interface

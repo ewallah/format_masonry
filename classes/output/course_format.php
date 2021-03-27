@@ -55,29 +55,35 @@ class course_format extends \core_course\course_format implements renderable, te
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
-        $cmlistclass = $this->format->get_output_classname('section_format\\cmlist');
+        $sectionclass = $this->format->get_output_classname('section_format');
+
         $modinfo = $this->format->get_modinfo();
         $course = $this->format->get_course();
+        $completioninfo = new \completion_info($course);
         $context = \context_course::instance($course->id);
         $border = "$course->borderwidth px solid $course->bordercolor";
         $sections = [];
         foreach ($modinfo->get_section_info_all() as $sectionnum => $section) {
-            if ($sectionnum == 0) {
-                $sectionname = get_string('section0name', 'format_masonry');
-            } else {
-                $sectionname = format_string($section->name, true, $context);
+            $showsection = $section->uservisible ||
+                    ($section->visible && !$section->available && !empty($section->availableinfo)) ||
+                    (!$section->visible && !$course->hiddensections);
+            if ($showsection) {
+                if ($sectionnum == 0) {
+                    $sectionname = get_string('section0name', 'format_masonry');
+                } else {
+                    $sectionname = format_string($section->name, true, $context);
+                }
+                $sectionlist = new $sectionclass($this->format, $section);
+                $data = $sectionlist->export_for_template($output);
+                $data->border = $border;
+                $data->backgroundc = $section->backcolor;
+                $data->aheader = $sectionname;
+                $sections[] = $data;
             }
-            $cmlist = new $cmlistclass($this->format, $section);
-            $sections[] = ['num' => $sectionnum,
-                           'id' => $section->id,
-                           'headers' => $sectionname,
-                           'border' => $border,
-                           'backgroundc' => $section->backcolor,
-                           'cmlist' => $cmlist->export_for_template($output)];
         }
         return (object)[
             'title' => $this->format->page_title(),
-            'completionhelp' => 'boe',
+            'completionhelp' => $completioninfo->display_help_icon(),
             'sections' => $sections,
             'background' => "$course->backcolor"
         ];

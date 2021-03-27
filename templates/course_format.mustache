@@ -82,16 +82,19 @@
 }}
 <h2 class="accesshide">{{{title}}}</h2>
 <div style="float:right">{{{completionhelp}}}</div>
-<ul class="masonry">
+<ul id="coursemasonry" class="masonry">
     {{#sections}}
         <li id="section-{{num}}"
             class="section masonry-brick"
             style="background-color: {{ backgroundc }}; border: {{ border }}"
             aria-label="sectionid-{{id}}-title">
             <div class="content">
-                <h3 class="sectionid-{{id}}-title sectionname" style="white-space: nowrap">
-                    {{#headers}} {{ headers }} {{/headers}}
-                    {{^headers}} {{#str}} sectionname,format_masonry {{/str}} {{ num }} {{/headers}}
+                <h3 class="sectionid-{{id}}-title sectionname">
+                    {{#controlmenu}}
+                         <a href="/course/editsection.php?id={{id}}">{{# pix }} t/edit, core, Edit David Beckham {{/ pix }}</a>
+                    {{/controlmenu}}
+                    {{#aheader}} {{ aheader}} {{/aheader}}
+                    {{^aheader}} {{#str}} sectionname, format_masonry {{/str}} {{ num }} {{/aheader}}
                 </h3>
                 {{{completioninfo}}}
                 {{#availability}}
@@ -104,7 +107,7 @@
                 </div>
                 {{#cmsummary}} {{> core_course/local/section_format/cmsummary }} {{/cmsummary}}
                 {{#cmlist}} {{> core_course/local/section_format/cmlist }} {{/cmlist}}
-                
+                {{{cmcontrols}}}
             </div>
        </li>
     {{/sections}}
