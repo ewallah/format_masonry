@@ -51,7 +51,7 @@ class course_format_masonry_testcase extends \advanced_testcase {
 
     /**
      * Tests for format_masonry::get_section_name method with default section names.
-     * @covers format_masonry
+     * @covers format_masonry\output\course_format
      */
     public function test_get_section_name() {
         $sections = get_fast_modinfo($this->course)->get_section_info_all();
@@ -69,7 +69,7 @@ class course_format_masonry_testcase extends \advanced_testcase {
 
     /**
      * Tests for format_masonry::get_section_name method with modified section names.
-     * @covers format_masonry
+     * @covers \format_masonry\output\course_format
      */
     public function test_get_section_name_customised() {
         global $DB;
@@ -210,7 +210,7 @@ class course_format_masonry_testcase extends \advanced_testcase {
 
     /**
      * Test format editing.
-     * @covers format_masonry
+     * @coversDefaultClass \format_masonry\output\course_format
      */
     public function test_format_editing() {
         global $CFG, $PAGE, $USER;
@@ -228,8 +228,23 @@ class course_format_masonry_testcase extends \advanced_testcase {
     }
 
     /**
+     * Test format.
+     * @coversDefaultClass \format_masonry\output\course_format
+     */
+    public function test_format_class() {
+        $format = course_get_format($this->course);
+        $this->assertEquals('masonry', $format->get_format());
+        $outformat = new \format_masonry\output\course_format($format);
+        $page = new \moodle_page();
+        $page->set_course($this->course);
+        $renderer = new \format_masonry_renderer($page, null);
+        $out = $renderer->render($outformat);
+        $this->assertStringContainsString('<ul id="coursemasonry" class="masonry">', $out);
+    }
+
+    /**
      * Test other.
-     * @covers format_masonry
+     * @covers format_masonry\output\course_format
      */
     public function test_other() {
         $this->setAdminUser();
