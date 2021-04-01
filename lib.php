@@ -35,6 +35,52 @@ require_once($CFG->dirroot. '/course/format/lib.php');
 class format_masonry extends core_course\course_format {
 
     /**
+     * Returns true if this course format uses sections.
+     *
+     * @return bool
+     */
+    public function uses_sections() {
+        return true;
+    }
+
+    /**
+     * Returns the display name of the given section that the course prefers.
+     *
+     * @param int|stdClass $section Section object from database or just field section.section
+     * @return string Display name that the course format prefers, e.g. "Topic 2"
+     */
+    public function get_section_name($section) {
+        $section = $this->get_section($section);
+        if ((string)$section->name !== '') {
+            return format_string($section->name, true, ['context' => context_course::instance($this->courseid)]);
+        } else {
+            return $this->get_default_section_name($section);
+        }
+    }
+
+    /**
+     * Returns the default section name for the topics course format.
+     *
+     * @param stdClass $section Section object from database or just field course_sections section
+     * @return string The default value for the section name.
+     */
+    public function get_default_section_name($section) {
+        if ($section->section == 0) {
+            return get_string('section0name', 'format_masonry');
+        }
+        return parent::get_default_section_name($section);
+    }
+
+    /**
+     * Generate the title for this section page.
+     *
+     * @return string the page title
+     */
+    public function page_title(): string {
+        return get_string('topicoutline');
+    }
+
+    /**
      * The URL to use for the specified course (with section)
      *
      * @param int|stdClass $section Section object from database or just field course_sections.section
@@ -45,6 +91,26 @@ class format_masonry extends core_course\course_format {
     public function get_view_url($section, $options = []) {
         $course = $this->get_course();
         return new \moodle_url('/course/view.php', ['id' => $course->id]);
+    }
+
+    /**
+     * Loads no course sections into the navigation
+     *
+     * @param global_navigation $navigation
+     * @param navigation_node $node The course node within the navigation
+     */
+    public function extend_course_navigation($navigation, navigation_node $node) {
+        return [];
+    }
+
+    /**
+     * Returns the list of blocks to be automatically added for the newly created course.
+     *
+     * @return array of default blocks, must contain two keys BLOCK_POS_LEFT and BLOCK_POS_RIGHT
+     *     each of values is an array of block names (for left and right side columns)
+     */
+    public function get_default_blocks() {
+        return [BLOCK_POS_LEFT => [], BLOCK_POS_RIGHT => []];
     }
 
     /**
@@ -66,6 +132,18 @@ class format_masonry extends core_course\course_format {
                 'cachedefault' => $color,
                 'help' => 'colordisplay',
                 'help_component' => 'format_masonry']];
+    }
+
+    /**
+     * Whether this format allows to delete sections.
+     *
+     * Do not call this function directly, instead use {@link course_can_delete_section()}
+     *
+     * @param int|stdClass|section_info $section
+     * @return bool
+     */
+    public function can_delete_section($section) {
+        return true;
     }
 
     /**
@@ -169,60 +247,5 @@ class format_masonry extends core_course\course_format {
     public function get_config_for_external() {
         // Return everything (nothing to hide).
         return $this->get_format_options();
-    }
-
-    /**
-     * Returns the default section name for the topics course format.
-     *
-     * @param stdClass $section Section object from database or just field course_sections section
-     * @return string The default value for the section name.
-     */
-    public function get_default_section_name($section) {
-        if ($section->section == 0) {
-            return get_string('section0name', 'format_masonry');
-        }
-        return parent::get_default_section_name($section);
-    }
-
-    /**
-     * Prepares the templateable object to display section name
-     *
-     * @param \section_info|\stdClass $section
-     * @param bool $linkifneeded
-     * @param bool $editable
-     * @param null|lang_string|string $edithint
-     * @param null|lang_string|string $editlabel
-     * @return \core\output\inplace_editable
-     */
-    public function inplace_editable_render_section_name(
-        $section, $linkifneeded = true, $editable = null, $edithint = null, $editlabel = null) {
-
-        if (empty($edithint)) {
-            $edithint = new \lang_string('editsectionname', 'format_topics');
-        }
-        if (empty($editlabel)) {
-            $title = get_section_name($section->course, $section);
-            $editlabel = new \lang_string('newsectionname', 'format_topics', $title);
-        }
-        return parent::inplace_editable_render_section_name($section, $linkifneeded, $editable, $edithint, $editlabel);
-    }
-}
-
-/**
- * Implements callback inplace_editable() allowing to edit values in-place
- *
- * @param string $itemtype
- * @param int $itemid
- * @param mixed $newvalue
- * @return \core\output\inplace_editable
- */
-function format_masonry_inplace_editable($itemtype, $itemid, $newvalue) {
-    global $DB, $CFG;
-    require_once($CFG->dirroot . '/course/lib.php');
-    if ($itemtype === 'sectionname' || $itemtype === 'sectionnamenl') {
-        $section = $DB->get_record_sql(
-            'SELECT s.* FROM {course_sections} s JOIN {course} c ON s.course = c.id WHERE s.id = ? AND c.format = ?',
-            [$itemid, 'masonry'], MUST_EXIST);
-        return course_get_format($section->course)->inplace_editable_update_section_name($section, $itemtype, $newvalue);
     }
 }

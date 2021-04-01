@@ -81,7 +81,6 @@
     }
 }}
 <h2 class="accesshide">{{{title}}}</h2>
-<div style="float:right">{{{completionhelp}}}</div>
 <ul id="coursemasonry" class="masonry">
     {{#sections}}
         <li id="section-{{num}}"
@@ -91,7 +90,7 @@
             <div class="content">
                 <h3 class="sectionid-{{id}}-title sectionname">
                     {{#controlmenu}}
-                         <a href="/course/editsection.php?id={{id}}">{{# pix }} t/edit, core, Edit David Beckham {{/ pix }}</a>
+                         <a href="/course/editsection.php?id={{id}}">{{# pix }} t/edit, core, {{#str}} editsection, moodle {{/str}} {{/ pix }}</a>
                     {{/controlmenu}}
                     {{#aheader}} {{ aheader}} {{/aheader}}
                     {{^aheader}} {{#str}} sectionname, format_masonry {{/str}} {{ num }} {{/aheader}}

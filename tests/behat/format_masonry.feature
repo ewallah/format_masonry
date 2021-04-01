@@ -32,7 +32,7 @@ Feature: format_masonry
 
   Scenario: Empty section 0 stays hidden
     Given I am on the "C1" "Course" page logged in as "teacher1"
-    Then I should not see "General" in the ".course-content" "css_element"
+    Then I should see "General" in the ".course-content" "css_element"
 
     When I turn editing mode on
     And I add a "Page" to section "0"
@@ -42,7 +42,7 @@ Feature: format_masonry
       | Page content | x  |
     And I click on "Save and return to course" "button"
     And I turn editing mode off
-    Then I should not see "General" in the "li#section-0" "css_element"
+    Then I should see "General" in the "li#section-0" "css_element"
 
   Scenario: The modules should be visible and hidden in masonry format
     Given I am on the "C1" "Course" page logged in as "teacher1"
@@ -84,15 +84,3 @@ Feature: format_masonry
     And I press "Save changes"
     And I turn editing mode off
     Then I should see "first" in the "li#section-1" "css_element"
-
-  @javascript
-  Scenario: Inline edit section name in masonry format
-    Given I am on the "C1" "Course" page logged in as "teacher1"
-    And I turn editing mode on
-    And I set the field "Edit topic name" in the "li#section-1" "css_element" to "Masonry"
-    Then I should not see "Topic 1" in the "region-main" "region"
-    And "New name for topic" "field" should not exist
-    And I should see "Masonry" in the "li#section-1" "css_element"
-    And I am on "Course 1" course homepage
-    And I should not see "Topic 1" in the "region-main" "region"
-    And I should see "Masonry" in the "li#section-1" "css_element"

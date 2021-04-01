@@ -46,5 +46,4 @@ class format_masonry_renderer extends format_section_renderer_base {
         }
         return parent::render($widget);
     }
-
 }

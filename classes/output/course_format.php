@@ -61,13 +61,13 @@ class course_format extends \core_course\course_format implements renderable, te
         $course = $this->format->get_course();
         $completioninfo = new \completion_info($course);
         $context = \context_course::instance($course->id);
-        $border = "$course->borderwidth px solid $course->bordercolor";
+        $border = $course->borderwidth . 'px solid ' . $course->bordercolor;
         $sections = [];
         foreach ($modinfo->get_section_info_all() as $sectionnum => $section) {
             $showsection = $section->uservisible ||
                     ($section->visible && !$section->available && !empty($section->availableinfo)) ||
                     (!$section->visible && !$course->hiddensections);
-            if ($showsection) {
+            if ($showsection ) {
                 if ($sectionnum == 0) {
                     $sectionname = get_string('section0name', 'format_masonry');
                 } else {
