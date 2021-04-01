@@ -198,12 +198,14 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $format = course_get_format($this->course);
         $this->assertEquals('masonry', $format->get_format());
         $this->setAdminUser();
-        $PAGE->get_renderer('core', 'course');
-        $PAGE->set_context(\context_course::instance($this->course->id));
+        $PAGE->set_course($this->course);
+        $PAGE->get_renderer('format_masonry');
+        // Mimick course variable.
         $course = $this->course;
         ob_start();
         include_once($CFG->dirroot . '/course/format/masonry/format.php');
         ob_end_clean();
+        $this->assertEquals($course, $PAGE->course);
     }
 
     /**
@@ -216,8 +218,8 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $this->assertEquals('masonry', $format->get_format());
         $this->setAdminUser();
         $USER->editing = true;
-        $PAGE->get_renderer('core', 'course');
-        $PAGE->set_context(\context_course::instance($this->course->id));
+        $PAGE->set_course($this->course);
+        $PAGE->get_renderer('format_masonry');
         sesskey();
         $_POST['marker'] = 2;
         ob_start();
