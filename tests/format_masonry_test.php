@@ -51,7 +51,7 @@ class course_format_masonry_testcase extends \advanced_testcase {
 
     /**
      * Tests for format_masonry::get_section_name method with default section names.
-     * @covers format_masonry\output\course_format
+     * @covers format_masonry
      */
     public function test_get_section_name() {
         $sections = get_fast_modinfo($this->course)->get_section_info_all();
@@ -60,16 +60,18 @@ class course_format_masonry_testcase extends \advanced_testcase {
             if ($section->section == 0) {
                 $sectionname = get_string('section0name', 'format_masonry');
                 $this->assertEquals($sectionname, $courseformat->get_default_section_name($section));
+                $this->assertEquals($sectionname, $courseformat->get_section_name($section));
             } else {
                 $sectionname = get_string('sectionname', 'format_masonry') . ' ' . $section->section;
                 $this->assertEquals($sectionname, $courseformat->get_default_section_name($section));
+                $this->assertEquals($sectionname, $courseformat->get_section_name($section));
             }
         }
     }
 
     /**
      * Tests for format_masonry::get_section_name method with modified section names.
-     * @covers \format_masonry\output\course_format
+     * @covers format_masonry
      */
     public function test_get_section_name_customised() {
         global $DB;
@@ -228,7 +230,7 @@ class course_format_masonry_testcase extends \advanced_testcase {
     }
 
     /**
-     * Test format.
+     * Test course_format class.
      * @coversDefaultClass \format_masonry\output\course_format
      */
     public function test_format_class() {
@@ -243,18 +245,32 @@ class course_format_masonry_testcase extends \advanced_testcase {
     }
 
     /**
-     * Test other.
-     * @covers format_masonry\output\course_format
+     * Test format_masonry class.
+     * @covers format_masonry
      */
-    public function test_other() {
-        $this->setAdminUser();
+    public function test_format_masonry() {
         $format = course_get_format($this->course);
+        $generator = $this->getDataGenerator();
+        $generator->get_plugin_generator('mod_wiki')->create_instance(['course' => $this->course->id, 'section' => 1]);
+        $modinfo = get_fast_modinfo($this->course);
+        $section = $modinfo->get_section_info(1);
+        $this->assertEquals('masonry', $format->get_format());
+        $this->assertTrue($format->uses_sections());
+        $this->assertTrue($format->can_delete_section($section));
+        $this->assertEquals('General', $format->get_default_section_name($modinfo->get_section_info(0)));
+        $this->assertEquals('Topic 1', $format->get_default_section_name($modinfo->get_section_info(1)));
+        $this->assertEquals('General', $format->get_section_name($modinfo->get_section_info(0)));
+        $this->assertEquals('Topic 1', $format->get_section_name($modinfo->get_section_info(1)));
+        $this->assertTrue($format->allow_stealth_module_visibility(null, null));
+        $this->assertEquals([], $format->extend_course_navigation(null, new navigation_node('Test Node')));
+        $this->assertCount(6, $format->get_config_for_external());
+        $this->assertCount(2, $format->get_default_blocks());
         $data = new \stdClass();
         $data->bordercolor = '#FFF';
         $data->backcolor = '#000';
-        $format->update_course_format_options($data, $this->course);
-        $this->assertCount(6, $format->course_format_options());
-        $this->assertTrue($format->allow_stealth_module_visibility(null, null));
-        $this->assertCount(6, $format->get_config_for_external());
+        $this->assertFalse($format->update_course_format_options([], null));
+        $this->assertFalse($format->update_course_format_options(new stdClass(), $data));
+        $this->assertCount(6, $format->course_format_options(false));
+        $this->assertCount(6, $format->course_format_options(true));
     }
 }

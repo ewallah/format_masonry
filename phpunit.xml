@@ -39,6 +39,7 @@
   <coverage>
     <include>
       <directory suffix=".php">classes</directory>
+      <file>lib.php</file>
     </include>
     <exclude>
       <directory suffix=".php">lang</directory>
