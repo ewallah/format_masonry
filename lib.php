@@ -137,8 +137,6 @@ class format_masonry extends format_topics {
     /**
      * Whether this format allows to delete sections.
      *
-     * Do not call this function directly, instead use {@link course_can_delete_section()}
-     *
      * @param int|stdClass|section_info $section
      * @return bool
      */
