@@ -40,10 +40,33 @@ class format_masonry_renderer extends format_section_renderer_base {
      * @return string the widget HTML
      */
     public function render(renderable $widget) {
-        if ($widget instanceof templatable) {
+        if ($widget instanceof format_masonry\output\course_format) {
             $data = $widget->export_for_template($this);
             return $this->render_from_template('format_masonry/course_format', $data);
         }
         return parent::render($widget);
+    }
+
+    /**
+     * Generate the section title, wraps it in a link to the section page if page is to be displayed on a separate page.
+     *
+     * @param section_info|stdClass $section The course_section entry from DB
+     * @param stdClass $course The course entry from DB
+     * @return string HTML to output.
+     */
+    public function section_title($section, $course) {
+        $data = course_get_format($section->course)->inplace_editable_render_section_name($section);
+        return parent::render($data);
+    }
+
+    /**
+     * Generate the section title to be displayed on the section page, without a link.
+     *
+     * @param section_info|stdClass $section The course_section entry from DB
+     * @param int|stdClass $course The course entry from DB
+     * @return string HTML to output.
+     */
+    public function section_title_without_link($section, $course) {
+        return get_section_name($section->course, $section);
     }
 }

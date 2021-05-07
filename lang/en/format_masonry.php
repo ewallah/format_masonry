@@ -42,3 +42,5 @@ $string['section0name'] = 'General';
 $string['sectionname'] = 'Topic';
 $string['showfromothers'] = 'Show Topic';
 $string['showalltopics'] = 'Show all topics';
+$string['editsectionname'] = 'Edit masonry section';
+$string['newsectionname'] = 'New masonry section';

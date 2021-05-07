@@ -135,8 +135,9 @@ class course_format_masonry_testcase extends \advanced_testcase {
      * @covers format_masonry_renderer
      */
     public function test_renderer() {
-        global $PAGE, $USER;
+        global $CFG, $PAGE, $USER;
         $this->setAdminUser();
+        set_user_preference('usemodchooser', true);
         $generator = $this->getDataGenerator();
         $generator->get_plugin_generator('mod_forum')->create_instance(['course' => $this->course->id, 'section' => 1]);
         $generator->get_plugin_generator('mod_wiki')->create_instance(['course' => $this->course->id, 'section' => 1]);
@@ -172,10 +173,9 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $PAGE->set_pagetype('course-view');
         $PAGE->set_url('/course/view.php?id=' . $this->course->id);
 
-        $renderer = $PAGE->get_renderer('format_masonry');
         $output = new \core_course\output\course_format($format);
         $out = $renderer->render($output);
-        $this->assertStringContainsString(' Add an activity', $out);
+        $this->assertStringNotContainsString(' Add an activity', $out);
     }
 
     /**
@@ -261,7 +261,7 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $this->assertEquals('Topic 1', $format->get_default_section_name($modinfo->get_section_info(1)));
         $this->assertEquals('General', $format->get_section_name($modinfo->get_section_info(0)));
         $this->assertEquals('Topic 1', $format->get_section_name($modinfo->get_section_info(1)));
-        $this->assertTrue($format->allow_stealth_module_visibility(null, null));
+        $this->assertTrue($format->allow_stealth_module_visibility(null, $modinfo->get_section_info(1)));
         $this->assertEquals([], $format->extend_course_navigation(null, new navigation_node('Test Node')));
         $this->assertCount(6, $format->get_config_for_external());
         $this->assertCount(2, $format->get_default_blocks());

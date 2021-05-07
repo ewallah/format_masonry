@@ -21,6 +21,33 @@
 
     Example context (json):
     {
+        "initialsection": {
+                "num": 0,
+                "id": 34,
+                "header": "Section title",
+                "border": "2px solid gray",
+                "backgroundc": "white",
+                "cmlist": {
+                    "cms": [
+                        {
+                            "cmitem": {
+                                "cmformat": {
+                                    "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Forum example</span></a>",
+                                    "hasname": "true"
+                                },
+                                "id": 1,
+                                "module": "forum",
+                                "extraclasses": "newmessages"
+                            }
+                        }
+                    ],
+                    "hascms": true
+                },
+                "iscurrent": true,
+                "summary": {
+                    "summarytext": "Summary text!"
+                }
+            },
         "sections": [
             {
                 "num": 1,
@@ -81,29 +108,32 @@
     }
 }}
 <h2 class="accesshide">{{{title}}}</h2>
+{{#numsections}} {{> core_course/local/course_format/addsection}} {{/numsections}}
 <ul id="coursemasonry" class="masonry">
-    {{#sections}}
-        <li id="section-{{num}}"
-            class="section masonry-brick"
-            style="background-color: {{ backgroundc }}; border: {{ border }}"
-            aria-label="sectionid-{{id}}-title">
+    {{#initialsection}}
+        <li id="section-{{num}}" class="section masonry-brick" style="background-color: {{ backgroundc }}; border: {{ border }};" aria-label="sectionid-{{id}}-title"> 
+            <div class="left side">{{#iscurrent}} {{{currentlink}}} {{/iscurrent}}</div>
+            <div class="right side">{{#controlmenu}} {{> core_course/local/section_format/controlmenu }} {{/controlmenu}} </div>
             <div class="content">
-                <h3 class="sectionid-{{id}}-title sectionname">
-                    {{#controlmenu}}
-                         <a href="/course/editsection.php?id={{id}}">{{# pix }} t/edit, core, {{#str}} editsection, moodle {{/str}} {{/ pix }}</a>
-                    {{/controlmenu}}
-                    {{#aheader}} {{ aheader}} {{/aheader}}
-                    {{^aheader}} {{#str}} sectionname, format_masonry {{/str}} {{ num }} {{/aheader}}
-                </h3>
+                {{#header}} {{> core_course/local/section_format/header }} {{/header}}
                 {{{completioninfo}}}
-                {{#availability}}
-                    {{> core_course/local/section_format/availability }}
-                {{/availability}}
-                <div class="summary">
-                {{#summary}}
-                    {{> core_course/local/section_format/summary }}
-                {{/summary}}
-                </div>
+                {{#availability}} {{> core_course/local/section_format/availability }} {{/availability}}
+                <div class="summary"> {{#summary}} {{> core_course/local/section_format/summary }} {{/summary}} </div>
+                {{#cmsummary}} {{> core_course/local/section_format/cmsummary }} {{/cmsummary}}
+                {{#cmlist}} {{> core_course/local/section_format/cmlist }} {{/cmlist}}
+                {{{cmcontrols}}}
+            </div>
+       </li>
+    {{/initialsection}}
+    {{#sections}}
+        <li id="section-{{num}}" class="section masonry-brick" style="background-color: {{ backgroundc }}; border: {{ border }};" aria-label="sectionid-{{id}}-title">
+            <div class="left side">{{#iscurrent}} {{{currentlink}}} {{/iscurrent}}</div>
+            <div class="right side">{{#controlmenu}} {{> core_course/local/section_format/controlmenu }} {{/controlmenu}} </div>
+            <div class="content">
+                {{#header}} {{> core_course/local/section_format/header }} {{/header}}
+                {{{completioninfo}}}
+                {{#availability}} {{> core_course/local/section_format/availability }} {{/availability}}
+                <div class="summary"> {{#summary}} {{> core_course/local/section_format/summary }} {{/summary}} </div>
                 {{#cmsummary}} {{> core_course/local/section_format/cmsummary }} {{/cmsummary}}
                 {{#cmlist}} {{> core_course/local/section_format/cmlist }} {{/cmlist}}
                 {{{cmcontrols}}}

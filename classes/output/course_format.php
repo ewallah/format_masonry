@@ -38,15 +38,7 @@ use templatable;
  * @copyright 2021 eWallah.net
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_format extends \core_course\course_format implements renderable, templatable {
-    /**
-     * Constructor.
-     *
-     * @param course_format_base $format the coruse format
-     */
-    public function __construct(course_format_base $format) {
-        $this->format = $format;
-    }
+class course_format extends \core_course\output\course_format implements renderable, templatable {
 
     /**
      * Export this data so it can be used as the context for a mustache template.
@@ -55,37 +47,16 @@ class course_format extends \core_course\course_format implements renderable, te
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
-        $sectionclass = $this->format->get_output_classname('section_format');
-
-        $modinfo = $this->format->get_modinfo();
         $course = $this->format->get_course();
-        $completioninfo = new \completion_info($course);
-        $context = \context_course::instance($course->id);
-        $border = $course->borderwidth . 'px solid ' . $course->bordercolor;
-        $sections = [];
-        foreach ($modinfo->get_section_info_all() as $sectionnum => $section) {
-            $showsection = $section->uservisible ||
-                    ($section->visible && !$section->available && !empty($section->availableinfo)) ||
-                    (!$section->visible && !$course->hiddensections);
-            if ($showsection ) {
-                if ($sectionnum == 0) {
-                    $sectionname = get_string('section0name', 'format_masonry');
-                } else {
-                    $sectionname = format_string($section->name, true, $context);
-                }
-                $sectionlist = new $sectionclass($this->format, $section);
-                $data = $sectionlist->export_for_template($output);
-                $data->border = $border;
-                $data->backgroundc = $section->backcolor;
-                $data->aheader = $sectionname;
-                $sections[] = $data;
+        $data = parent::export_for_template($output);
+        $data->background = "$course->backcolor";
+        $format = course_get_format($course);
+        if (!$format->show_editor()) {
+            $modinfo = $format->get_modinfo();
+            if (empty($modinfo->sections[0])) {
+                $data->initialsection = false;
             }
         }
-        return (object)[
-            'title' => $this->format->page_title(),
-            'completionhelp' => $completioninfo->display_help_icon(),
-            'sections' => $sections,
-            'background' => "$course->backcolor"
-        ];
+        return $data;
     }
 }

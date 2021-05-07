@@ -1,4 +1,4 @@
-@ewallah @format @format_masonry
+@ewallah @format @format_masonry @javascript
 
 Feature: format_masonry
   In order to view my course contents I have to browse
@@ -32,7 +32,7 @@ Feature: format_masonry
 
   Scenario: Empty section 0 stays hidden
     Given I am on the "C1" "Course" page logged in as "teacher1"
-    Then I should see "General" in the ".course-content" "css_element"
+    Then I should not see "General" in the ".course-content" "css_element"
 
     When I turn editing mode on
     And I add a "Page" to section "0"

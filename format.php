@@ -50,3 +50,4 @@ $PAGE->requires->js_init_call('M.masonry.init',
        'requires' => ['base', 'node', 'transition', 'event', 'io-base', 'moodle-core-io']
     ]
 );
+$PAGE->requires->js('/course/format/masonry/edit.js');

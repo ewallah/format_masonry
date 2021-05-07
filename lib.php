@@ -23,7 +23,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-require_once($CFG->dirroot. '/course/format/lib.php');
+require_once($CFG->dirroot. '/course/format/topics/lib.php');
 
 /**
  * Main class for the masonry course format
@@ -32,7 +32,7 @@ require_once($CFG->dirroot. '/course/format/lib.php');
  * @copyright  Renaat Debleu (www.eWallah.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_masonry extends core_course\course_format {
+class format_masonry extends format_topics {
 
     /**
      * Returns true if this course format uses sections.
@@ -166,7 +166,7 @@ class format_masonry extends core_course\course_format {
             $courseformatoptions = [
                 'numsections' => ['default' => $courseconfig->numsections, 'type' => PARAM_INT],
                 'hiddensections' => ['type' => PARAM_INT, 'default' => 1],
-                'coursedisplay' => ['type' => PARAM_INT, 'default' => 1],
+                'coursedisplay' => ['type' => PARAM_INT, 'default' => COURSE_DISPLAY_SINGLEPAGE],
                 'borderwidth' => ['type' => PARAM_INT, 'default' => 1],
                 'bordercolor' => ['type' => PARAM_TEXT, 'default' => '#F0F0F0'],
                 'backcolor' => ['type' => PARAM_TEXT, 'default' => '#F0F0F0']];
@@ -235,7 +235,7 @@ class format_masonry extends core_course\course_format {
      * @return bool
      */
     public function allow_stealth_module_visibility($cm, $section) {
-        return true;
+        return !$section->section || $section->visible;
     }
 
     /**
@@ -247,5 +247,46 @@ class format_masonry extends core_course\course_format {
     public function get_config_for_external() {
         // Return everything (nothing to hide).
         return $this->get_format_options();
+    }
+
+    /**
+     * Prepares the templateable object to display section name.
+     *
+     * @param \section_info|\stdClass $section
+     * @param bool $linkifneeded
+     * @param bool $editable
+     * @param null|lang_string|string $edithint
+     * @param null|lang_string|string $editlabel
+     * @return inplace_editable
+     */
+    public function inplace_editable_render_section_name($section, $linkifneeded = true,
+            $editable = null, $edithint = null, $editlabel = null) {
+        if (empty($edithint)) {
+            $edithint = new \lang_string('editsectionname', 'format_masonry');
+        }
+        if (empty($editlabel)) {
+            $title = get_section_name($section->course, $section);
+            $editlabel = new \lang_string('newsectionname', 'format_masonry', $title);
+        }
+        return parent::inplace_editable_render_section_name($section, $linkifneeded, $editable, $edithint, $editlabel);
+    }
+}
+
+/**
+ * Implements callback inplace_editable() allowing to edit values in-place.
+ *
+ * @param string $itemtype
+ * @param int $itemid
+ * @param mixed $newvalue
+ * @return inplace_editable
+ */
+function format_masonry_inplace_editable($itemtype, $itemid, $newvalue) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot . '/course/lib.php');
+    if ($itemtype === 'sectionname' || $itemtype === 'sectionnamenl') {
+        $section = $DB->get_record_sql(
+            'SELECT s.* FROM {course_sections} s JOIN {course} c ON s.course = c.id WHERE s.id = ? AND c.format = ?',
+            [$itemid, 'masonry'], MUST_EXIST);
+        return course_get_format($section->course)->inplace_editable_update_section_name($section, $itemtype, $newvalue);
     }
 }
