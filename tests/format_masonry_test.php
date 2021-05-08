@@ -47,6 +47,7 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $this->course = $this->getDataGenerator()->create_course(
            ['numsections' => 5, 'format' => 'masonry'], ['createsections' => true]);
         $this->resetAfterTest(true);
+        $this->setAdminUser();
     }
 
     /**
@@ -135,13 +136,12 @@ class course_format_masonry_testcase extends \advanced_testcase {
      * @covers format_masonry_renderer
      */
     public function test_renderer() {
-        global $CFG, $PAGE, $USER;
-        $this->setAdminUser();
-        set_user_preference('usemodchooser', true);
+        global $PAGE, $USER;
         $generator = $this->getDataGenerator();
         $generator->get_plugin_generator('mod_forum')->create_instance(['course' => $this->course->id, 'section' => 1]);
         $generator->get_plugin_generator('mod_wiki')->create_instance(['course' => $this->course->id, 'section' => 1]);
         set_section_visible($this->course->id, 2, 0);
+        
         $page = new \moodle_page();
         $page->set_context(\context_course::instance($this->course->id));
         $page->set_course($this->course);
@@ -157,6 +157,7 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $format = course_get_format($this->course);
         $outputclass = $format->get_output_classname('course_format');
         $this->assertEquals('format_masonry\output\course_format', $outputclass);
+        $USER->editing = true;
         $output = new $outputclass($format);
         $out = $renderer->render($output);
         $this->assertStringContainsString('1px solid ', $out);
@@ -243,6 +244,27 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $out = $renderer->render($outformat);
         $this->assertStringContainsString('<ul id="coursemasonry" class="masonry">', $out);
     }
+
+    /**
+     * Test section_format class.
+     * @coversDefaultClass \format_masonry\output\section_format
+     */
+    public function test_section_class() {
+        global $CFG, $USER;
+        require_once($CFG->libdir . '/externallib.php');
+        $USER->editing = true;
+        $format = course_get_format($this->course);
+        $modinfo = get_fast_modinfo($this->course);
+        $section = $modinfo->get_section_info(1);
+        $outformat = new \format_masonry\output\section_format($format, $section);
+        $page = new \moodle_page();
+        $page->set_course($this->course);
+        $renderer = new \format_masonry_renderer($page, null);
+        $out = $renderer->render($outformat);
+        $this->assertStringContainsString('Topic 1', $out);
+        format_masonry_inplace_editable('sectionname', $section->id, 'newname');
+    }
+
 
     /**
      * Test format_masonry class.

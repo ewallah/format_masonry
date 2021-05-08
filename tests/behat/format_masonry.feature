@@ -1,4 +1,4 @@
-@ewallah @format @format_masonry @javascript
+@ewallah @format @format_masonry
 
 Feature: format_masonry
   In order to view my course contents I have to browse
@@ -29,20 +29,6 @@ Feature: format_masonry
       | choice   | choice 1  | Test choice description  | C1     | choice1     | 4       | 1       |
       | choice   | choice 2  | Test choice description  | C1     | choice2     | 4       | 1       |
       | choice   | choice 3  | Test choice description  | C1     | choice3     | 4       | 0       |
-
-  Scenario: Empty section 0 stays hidden
-    Given I am on the "C1" "Course" page logged in as "teacher1"
-    Then I should not see "General" in the ".course-content" "css_element"
-
-    When I turn editing mode on
-    And I add a "Page" to section "0"
-    And I set the following fields to these values:
-      | Name         | P1 |
-      | Description  | x  |
-      | Page content | x  |
-    And I click on "Save and return to course" "button"
-    And I turn editing mode off
-    Then I should see "General" in the "li#section-0" "css_element"
 
   Scenario: The modules should be visible and hidden in masonry format
     Given I am on the "C1" "Course" page logged in as "teacher1"
@@ -84,3 +70,18 @@ Feature: format_masonry
     And I press "Save changes"
     And I turn editing mode off
     Then I should see "first" in the "li#section-1" "css_element"
+
+  @javascript
+  Scenario: Empty section 0 stays hidden
+    Given I am on the "C1" "Course" page logged in as "teacher1"
+    Then I should not see "General" in the ".course-content" "css_element"
+
+    When I turn editing mode on
+    And I add a "Page" to section "0"
+    And I set the following fields to these values:
+      | Name         | P1 |
+      | Description  | x  |
+      | Page content | x  |
+    And I click on "Save and return to course" "button"
+    And I turn editing mode off
+    Then I should see "General" in the "li#section-0" "css_element"
