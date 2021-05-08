@@ -141,7 +141,7 @@ class course_format_masonry_testcase extends \advanced_testcase {
         $generator->get_plugin_generator('mod_forum')->create_instance(['course' => $this->course->id, 'section' => 1]);
         $generator->get_plugin_generator('mod_wiki')->create_instance(['course' => $this->course->id, 'section' => 1]);
         set_section_visible($this->course->id, 2, 0);
-        
+
         $page = new \moodle_page();
         $page->set_context(\context_course::instance($this->course->id));
         $page->set_course($this->course);
