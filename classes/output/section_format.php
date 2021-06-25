@@ -73,7 +73,6 @@ class section_format extends \core_course\output\section_format implements rende
             'summary' => $summary->export_for_template($output),
             'availability' => $availability->export_for_template($output),
             'cmlist' => $cmlist->export_for_template($output),
-            'completioninfo' => $completioninfo->display_help_icon(),
             'border' => $border,
             'backgroundc' => $thissection->backcolor,
         ];
